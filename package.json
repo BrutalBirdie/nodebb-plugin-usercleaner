@@ -1,0 +1,33 @@
+{
+  "name": "nodebb-plugin-usercleaner",
+  "version": "1.0.0",
+  "description": "Bulk-delete dormant, abandoned and spam accounts from NodeBB with a dry-run-first admin workflow, live filter preview and background deletion jobs.",
+  "main": "library.js",
+  "author": "BrutalBirdie",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/BrutalBirdie/nodebb-plugin-usercleaner"
+  },
+  "scripts": {
+    "lint": "eslint ."
+  },
+  "devDependencies": {
+    "eslint": "^9.0.0"
+  },
+  "keywords": [
+    "nodebb",
+    "plugin",
+    "admin",
+    "user-cleanup",
+    "spam",
+    "dormant-users",
+    "bulk-delete"
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/BrutalBirdie/nodebb-plugin-usercleaner/issues"
+  },
+  "nbbpm": {
+    "compatibility": "^4.0.0"
+  }
+}

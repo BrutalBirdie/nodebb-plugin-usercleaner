@@ -1,0 +1,24 @@
+{
+	"id": "nodebb-plugin-usercleaner",
+	"url": "https://github.com/BrutalBirdie/nodebb-plugin-usercleaner",
+	"library": "./library.js",
+	"hooks": [
+		{
+			"hook": "static:app.load",
+			"method": "init"
+		},
+		{
+			"hook": "static:api.routes",
+			"method": "addRoutes"
+		},
+		{
+			"hook": "filter:admin.header.build",
+			"method": "addAdminNavigation"
+		}
+	],
+	"modules": {
+		"../admin/plugins/usercleaner.js": "./public/lib/admin.js"
+	},
+	"templates": "templates",
+	"languages": "languages"
+}
