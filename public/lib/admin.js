@@ -18,6 +18,8 @@ const STATUS_LABELS = {
 
 let pollTimer = null;
 let lastPreview = null;
+let notifiedJobId = null;
+let firstRender = true;
 
 export function init() {
 	loadGroups().then(() => load('usercleaner', $('.usercleaner-settings')));
@@ -41,6 +43,9 @@ export function init() {
 		e.preventDefault();
 		del('/plugins/usercleaner/job', {}).then(refresh).catch(showError);
 	});
+
+	$('#dryRun').on('change', updateRunButton);
+	updateRunButton();
 
 	$('#export').attr('href', `${config.relative_path}/api/v3/plugins/usercleaner/job/export`);
 
@@ -68,6 +73,17 @@ function collect() {
 		contentMode: $('#contentMode').val(),
 		limit: $('#limit').val(),
 	};
+}
+
+function updateRunButton() {
+	const dryRun = $('#dryRun').is(':checked');
+	$('#run')
+		.toggleClass('btn-danger', !dryRun)
+		.toggleClass('btn-warning', dryRun)
+		.translateText(dryRun ? '[[usercleaner:action.run-dry]]' : '[[usercleaner:action.run-delete]]');
+	$('#dry-run-box').toggleClass('border-danger border-2', !dryRun);
+	$('#dry-run-help').translateText(dryRun ?
+		'[[usercleaner:action.dry-run-help]]' : '[[usercleaner:action.dry-run-off-help]]');
 }
 
 async function loadGroups() {
@@ -148,6 +164,7 @@ function confirmAndRun() {
 }
 
 async function start(dryRun, confirmCount) {
+	showStarting(dryRun);
 	try {
 		await post('/plugins/usercleaner/job', {
 			...collect(),
@@ -155,10 +172,32 @@ async function start(dryRun, confirmCount) {
 			confirmPhrase: dryRun ? '' : 'DELETE',
 			confirmCount,
 		});
+		notifiedJobId = null;
+		alerts.success(dryRun ? '[[usercleaner:alert.dry-run-started]]' : '[[usercleaner:alert.run-started]]');
 		startPolling();
 	} catch (err) {
+		$('#progress-card').addClass('hidden');
+		$('#run, #preview').prop('disabled', false);
 		showError(err);
 	}
+}
+
+// The first poll is a second away; show the job as started immediately so the
+// admin never sees a dead page after confirming a deletion run.
+function showStarting(dryRun) {
+	const suffix = dryRun ? ' [[usercleaner:status.dry-run-suffix]]' : '';
+	$('#progress-card').removeClass('hidden');
+	$('#progress-spinner').removeClass('hidden');
+	$('#progress-title').translateText(`[[usercleaner:status.starting]]${suffix}`);
+	$('#progress-meta').text('');
+	$('#progress-text').text('');
+	$('#progress-errors').empty();
+	$('#progress-bar')
+		.css('width', '100%')
+		.text('')
+		.removeClass('bg-danger bg-success')
+		.addClass('progress-bar-animated progress-bar-striped');
+	$('#run, #preview').prop('disabled', true);
 }
 
 function startPolling() {
@@ -178,6 +217,7 @@ async function refresh() {
 	try {
 		const { job } = await get('/plugins/usercleaner/job', {});
 		renderJob(job);
+		firstRender = false;
 		if (job && (job.status === 'scanning' || job.status === 'deleting')) {
 			if (!pollTimer) {
 				startPolling();
@@ -228,6 +268,7 @@ function renderJob(job) {
 
 	const running = job.status === 'scanning' || job.status === 'deleting';
 	$('#progress-card').removeClass('hidden');
+	$('#progress-spinner').toggleClass('hidden', !running);
 	$('#cancel').toggleClass('hidden', !running);
 	$('#run').prop('disabled', running);
 	$('#preview').prop('disabled', running);
@@ -238,12 +279,18 @@ function renderJob(job) {
 
 	$('#progress-bar')
 		.css('width', `${running ? percent : 100}%`)
+		.text(running ? `${percent}%` : '')
 		.toggleClass('progress-bar-animated progress-bar-striped', running)
 		.toggleClass('bg-danger', job.status === 'error' || job.status === 'aborted')
 		.toggleClass('bg-success', job.status === 'completed');
 
 	const suffix = job.dryRun ? ' [[usercleaner:status.dry-run-suffix]]' : '';
 	$('#progress-title').translateText(`${STATUS_LABELS[job.status] || job.status}${suffix}`);
+
+	const elapsed = formatDuration((job.finishedAt || Date.now()) - job.startedAt);
+	$('#progress-meta').translateText(running ?
+		`[[usercleaner:progress.elapsed, ${elapsed}]]` : `[[usercleaner:progress.finished, ${elapsed}]]`);
+
 	$('#progress-text').translateText(
 		`[[usercleaner:progress.text, ${job.scanned}, ${job.total}, ${job.matched}, ${job.deleted}, ${job.failed}]]`
 	);
@@ -258,14 +305,40 @@ function renderJob(job) {
 		renderStats(job);
 		renderSample(job.sample);
 		$('#export').toggleClass('hidden', !job.hasExport);
+		announceFinished(job);
 		if (job.dryRun) {
 			lastPreview = job;
 		} else {
 			// Never leave a real run armed: the next click must start from a dry run again.
 			lastPreview = null;
 			$('#dryRun').prop('checked', true);
+			updateRunButton();
 		}
 	}
+}
+
+function announceFinished(job) {
+	if (notifiedJobId === job.id) {
+		return;
+	}
+	notifiedJobId = job.id;
+	// A job that already ended before this page loaded is history, not news.
+	if (firstRender) {
+		return;
+	}
+	if (job.status === 'completed' && !job.dryRun) {
+		alerts.success(`[[usercleaner:alert.run-finished, ${job.deleted}, ${job.failed}]]`);
+	} else if (job.status === 'error' || job.status === 'aborted') {
+		alerts.error(job.message || '[[usercleaner:status.aborted]]');
+	}
+}
+
+function formatDuration(ms) {
+	const seconds = Math.max(0, Math.round(ms / 1000));
+	if (seconds < 60) {
+		return `${seconds}s`;
+	}
+	return `${Math.floor(seconds / 60)}m ${seconds % 60}s`;
 }
 
 function formatDate(timestamp) {

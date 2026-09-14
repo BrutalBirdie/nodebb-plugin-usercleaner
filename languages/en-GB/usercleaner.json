@@ -55,8 +55,11 @@
 	"action.preview": "Preview",
 	"action.run": "Run",
 	"action.cancel": "Cancel run",
+	"action.run-dry": "Run dry run",
+	"action.run-delete": "Delete matching users",
 	"action.dry-run": "Dry run",
-	"action.dry-run-help": "On: the run only counts and lists matches, nothing is deleted. This switch resets itself to on after every real run.",
+	"action.dry-run-help": "On: Run starts a background job that scans and lists the matching accounts and deletes nothing — the same result as Preview, but with live progress and a downloadable list. Turn it off to actually delete.",
+	"action.dry-run-off-help": "Off: Run will permanently delete the matched accounts after you confirm. This switch resets itself to on after every real run.",
 
 	"results.heading": "Results",
 	"results.empty": "Run a preview to see how many accounts match.",
@@ -67,6 +70,8 @@
 	"results.export": "Download matches as CSV",
 
 	"progress.heading": "Job",
+	"progress.elapsed": "Running for %1",
+	"progress.finished": "Took %1",
 	"progress.text": "Scanned %1 of %2 · matched %3 · deleted %4 · failed %5",
 
 	"sample.heading": "Sample of matched accounts",
@@ -76,6 +81,7 @@
 	"sample.rep": "Rep",
 	"sample.last-online": "Last seen",
 
+	"status.starting": "Starting",
 	"status.scanning": "Scanning users",
 	"status.deleting": "Deleting users",
 	"status.completed": "Finished",
@@ -83,6 +89,10 @@
 	"status.aborted": "Aborted",
 	"status.error": "Failed",
 	"status.dry-run-suffix": "(dry run)",
+
+	"alert.dry-run-started": "Dry run started. Nothing will be deleted.",
+	"alert.run-started": "Deletion job started. The progress bar at the top of this page keeps updating, and survives a page reload.",
+	"alert.run-finished": "Run finished: %1 accounts deleted, %2 failed.",
 
 	"confirm.title": "Permanently delete accounts",
 	"confirm.body": "You are about to permanently delete %1 user accounts. This cannot be undone.",

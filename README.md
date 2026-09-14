@@ -74,6 +74,17 @@ progress and can cancel a run in flight; already-deleted accounts are not restor
 cancellation. Deletions are paced (one account at a time, with a short pause) so a large
 run does not starve the forum.
 
+The progress bar sits at the top of the page and is rebuilt from the server on every page
+load, so reloading or navigating away and back keeps showing a running job. The job lives
+in the NodeBB process, so a restart of NodeBB does lose it — a deletion already carried out
+stays carried out.
+
+**Preview vs. dry run.** *Preview* is a synchronous scan that answers "how many match?"
+and fills the sample table; it is what arms the Run button. *Dry run* is the same scan
+executed as the background job, with the live progress bar and a downloadable CSV of every
+match, and it still deletes nothing. Only unticking Dry run and confirming twice deletes
+anything.
+
 The matched account list can be downloaded as CSV after a dry run — review it before
 committing to a real run.
 

@@ -9,6 +9,30 @@
 	</div>
 
 	<div class="row">
+		<div class="col-12">
+			<div class="card mb-3 hidden" id="progress-card">
+				<div class="card-header d-flex flex-wrap gap-2 justify-content-between align-items-center">
+					<span class="fw-bold">
+						<i class="fa fa-spinner fa-spin hidden" id="progress-spinner"></i>
+						<span id="progress-title">{{tx("usercleaner:progress.heading")}}</span>
+					</span>
+					<span class="d-flex gap-3 align-items-center">
+						<span class="small text-muted" id="progress-meta"></span>
+						<button id="cancel" class="btn btn-sm btn-outline-danger hidden">{{tx("usercleaner:action.cancel")}}</button>
+					</span>
+				</div>
+				<div class="card-body">
+					<div class="progress mb-2" role="progressbar" style="height: 1.5rem;">
+						<div class="progress-bar" id="progress-bar" style="width: 0%;">0%</div>
+					</div>
+					<div id="progress-text" class="small text-muted"></div>
+					<div id="progress-errors" class="small text-danger mt-2"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="row">
 		<div class="col-lg-7">
 			<form role="form" class="usercleaner-settings">
 				<div class="card mb-3">
@@ -128,17 +152,18 @@
 				</div>
 			</form>
 
+			<div class="border rounded p-3 mb-3 bg-body-tertiary" id="dry-run-box">
+				<div class="form-check form-switch ps-5">
+					<input type="checkbox" class="form-check-input" id="dryRun" checked />
+					<label class="form-check-label fw-bold" for="dryRun">{{tx("usercleaner:action.dry-run")}}</label>
+				</div>
+				<p class="form-text mb-0" id="dry-run-help">{{tx("usercleaner:action.dry-run-help")}}</p>
+			</div>
+
 			<div class="d-flex flex-wrap gap-2 mb-3">
 				<button id="save" class="btn btn-light">{{tx("usercleaner:action.save-defaults")}}</button>
 				<button id="preview" class="btn btn-primary">{{tx("usercleaner:action.preview")}}</button>
 				<button id="run" class="btn btn-danger">{{tx("usercleaner:action.run")}}</button>
-				<button id="cancel" class="btn btn-outline-secondary hidden">{{tx("usercleaner:action.cancel")}}</button>
-			</div>
-
-			<div class="form-check form-switch border rounded p-3 ps-5 mb-3 bg-body-tertiary">
-				<input type="checkbox" class="form-check-input" id="dryRun" checked />
-				<label class="form-check-label fw-bold" for="dryRun">{{tx("usercleaner:action.dry-run")}}</label>
-				<p class="form-text mb-0">{{tx("usercleaner:action.dry-run-help")}}</p>
 			</div>
 		</div>
 
@@ -160,17 +185,6 @@
 						</dl>
 						<a href="#" id="export" class="btn btn-sm btn-light hidden">{{tx("usercleaner:results.export")}}</a>
 					</div>
-				</div>
-			</div>
-
-			<div class="card mb-3 hidden" id="progress-card">
-				<div class="card-header" id="progress-title">{{tx("usercleaner:progress.heading")}}</div>
-				<div class="card-body">
-					<div class="progress mb-2" role="progressbar">
-						<div class="progress-bar" id="progress-bar" style="width: 0%;"></div>
-					</div>
-					<div id="progress-text" class="small text-muted"></div>
-					<div id="progress-errors" class="small text-danger mt-2"></div>
 				</div>
 			</div>
 
