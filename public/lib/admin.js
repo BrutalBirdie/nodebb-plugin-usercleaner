@@ -72,6 +72,7 @@ function collect() {
 		excludeGroups: $('#excludeGroups').val() || [],
 		contentMode: $('#contentMode').val(),
 		limit: $('#limit').val(),
+		concurrency: $('#concurrency').val(),
 	};
 }
 

@@ -71,8 +71,14 @@ content.
 Scanning and deleting run as a background job, because purging tens of thousands of
 accounts takes far longer than an HTTP request may last. The admin page polls for live
 progress and can cancel a run in flight; already-deleted accounts are not restored by a
-cancellation. Deletions are paced (one account at a time, with a short pause) so a large
-run does not starve the forum.
+cancellation.
+
+Deletions run through a small worker pool — **Parallel deletions** (1-20, default 5) in
+the deletion card — with a short pause per worker so a large run does not starve the
+forum. This is the same mechanism the ACP user list uses when you delete a selection:
+NodeBB has no bulk-delete endpoint, its user list simply fires one `DELETE /users/:uid`
+per selected account in parallel. Raise the value for faster runs; lower it if the forum
+feels sluggish while a run is going.
 
 The progress bar sits at the top of the page and is rebuilt from the server on every page
 load, so reloading or navigating away and back keeps showing a running job. The job lives

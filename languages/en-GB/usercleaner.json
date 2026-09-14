@@ -49,6 +49,8 @@
 	"deletion.content-keep": "Delete the account but keep its content",
 	"deletion.content-mode-help": "Irrelevant when the post-count filter is 0, since matched users have no content.",
 	"deletion.limit": "Maximum deletions per run",
+	"deletion.concurrency": "Parallel deletions",
+	"deletion.concurrency-help": "How many accounts are deleted at the same time (1-20). The ACP user list does the same thing when you delete a selection. Raise it for faster runs, lower it if the forum feels sluggish during a run.",
 	"deletion.limit-help": "A safety valve. The preview still reports the full match count.",
 
 	"action.save-defaults": "Save as defaults",

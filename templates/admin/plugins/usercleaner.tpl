@@ -143,10 +143,17 @@
 							</select>
 							<p class="form-text">{{tx("usercleaner:deletion.content-mode-help")}}</p>
 						</div>
-						<div>
-							<label class="form-label" for="limit">{{tx("usercleaner:deletion.limit")}}</label>
-							<input type="number" min="1" step="1" class="form-control" id="limit" name="limit" value="1000" />
-							<p class="form-text">{{tx("usercleaner:deletion.limit-help")}}</p>
+						<div class="row">
+							<div class="col-sm-6">
+								<label class="form-label" for="limit">{{tx("usercleaner:deletion.limit")}}</label>
+								<input type="number" min="1" step="1" class="form-control" id="limit" name="limit" value="1000" />
+								<p class="form-text">{{tx("usercleaner:deletion.limit-help")}}</p>
+							</div>
+							<div class="col-sm-6">
+								<label class="form-label" for="concurrency">{{tx("usercleaner:deletion.concurrency")}}</label>
+								<input type="number" min="1" max="20" step="1" class="form-control" id="concurrency" name="concurrency" value="5" />
+								<p class="form-text">{{tx("usercleaner:deletion.concurrency-help")}}</p>
+							</div>
 						</div>
 					</div>
 				</div>
