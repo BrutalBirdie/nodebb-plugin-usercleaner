@@ -34,8 +34,9 @@ plugin.addRoutes = async ({ router, middleware, helpers }) => {
 
 	routeHelpers.setupApiRoute(router, 'post', '/usercleaner/preview', guard, async (req, res) => {
 		const filters = filterUtils.normalize(req.body);
-		if (filterUtils.isTooBroad(filters)) {
-			return helpers.formatApiResponse(400, res, new Error('[[usercleaner:error.filters-too-broad]]'));
+		const invalid = filterError(filters);
+		if (invalid) {
+			return helpers.formatApiResponse(400, res, invalid);
 		}
 
 		const result = await scanner.scan(filters, {
@@ -56,12 +57,13 @@ plugin.addRoutes = async ({ router, middleware, helpers }) => {
 	// Static path first so it is not shadowed by /usercleaner/job.
 	routeHelpers.setupApiRoute(router, 'get', '/usercleaner/job/export', guard, async (req, res) => {
 		const rows = job.exportRows();
-		const header = 'uid,username,email,emailConfirmed,joindate,lastonline,postcount,topiccount,reputation,banned,flags\n';
+		const header = 'uid,username,email,emailConfirmed,emailPending,joindate,lastonline,postcount,topiccount,reputation,banned,flags\n';
 		const body = rows.map(row => [
 			row.uid,
 			csvCell(row.username),
 			csvCell(row.email),
 			row.emailConfirmed,
+			row.emailPending,
 			toIso(row.joindate),
 			toIso(row.lastonline),
 			row.postcount,
@@ -86,8 +88,9 @@ plugin.addRoutes = async ({ router, middleware, helpers }) => {
 		}
 
 		const filters = filterUtils.normalize(req.body);
-		if (filterUtils.isTooBroad(filters)) {
-			return helpers.formatApiResponse(400, res, new Error('[[usercleaner:error.filters-too-broad]]'));
+		const invalid = filterError(filters);
+		if (invalid) {
+			return helpers.formatApiResponse(400, res, invalid);
 		}
 
 		const dryRun = req.body.dryRun !== false && req.body.dryRun !== 'false';
@@ -125,6 +128,18 @@ plugin.addAdminNavigation = (header) => {
 	});
 	return header;
 };
+
+function filterError(filters) {
+	if (filterUtils.isTooBroad(filters)) {
+		return new Error('[[usercleaner:error.filters-too-broad]]');
+	}
+	try {
+		filterUtils.emailRegex(filters);
+	} catch (err) {
+		return err;
+	}
+	return null;
+}
 
 function csvCell(value) {
 	return `"${String(value === undefined || value === null ? '' : value).replace(/"/g, '""')}"`;

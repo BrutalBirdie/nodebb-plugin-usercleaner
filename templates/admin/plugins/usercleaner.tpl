@@ -21,8 +21,8 @@
 								<p class="form-text">{{tx("usercleaner:filters.max-postcount-help")}}</p>
 							</div>
 							<div class="col-sm-6">
-								<label class="form-label" for="max{{tx("usercleaner:sample.rep")}}utation">{{tx("usercleaner:filters.max-reputation")}}</label>
-								<input type="number" min="0" step="1" class="form-control" id="max{{tx("usercleaner:sample.rep")}}utation" name="max{{tx("usercleaner:sample.rep")}}utation" value="0" />
+								<label class="form-label" for="maxReputation">{{tx("usercleaner:filters.max-reputation")}}</label>
+								<input type="number" min="0" step="1" class="form-control" id="maxReputation" name="maxReputation" value="0" />
 								<p class="form-text">{{tx("usercleaner:filters.max-reputation-help")}}</p>
 							</div>
 						</div>
@@ -69,6 +69,12 @@
 						<div class="form-check mb-3">
 							<input type="checkbox" class="form-check-input" id="profileSpamOnly" name="profileSpamOnly" />
 							<label class="form-check-label" for="profileSpamOnly">{{tx("usercleaner:filters.profile-spam")}}</label>
+						</div>
+
+						<div class="mb-3">
+							<label class="form-label" for="emailPattern">{{tx("usercleaner:filters.email-pattern")}}</label>
+							<input type="text" class="form-control" id="emailPattern" name="emailPattern" placeholder="{{tx("usercleaner:filters.email-pattern-placeholder")}}" />
+							<p class="form-text">{{tx("usercleaner:filters.email-pattern-help")}}</p>
 						</div>
 
 						<div class="row mb-3">
@@ -130,8 +136,8 @@
 			</div>
 
 			<div class="form-check form-switch border rounded p-3 ps-5 mb-3 bg-body-tertiary">
-				<input type="checkbox" class="form-check-input" id="dry{{tx("usercleaner:action.run")}}" checked />
-				<label class="form-check-label fw-bold" for="dry{{tx("usercleaner:action.run")}}">{{tx("usercleaner:action.dry-run")}}</label>
+				<input type="checkbox" class="form-check-input" id="dryRun" checked />
+				<label class="form-check-label fw-bold" for="dryRun">{{tx("usercleaner:action.dry-run")}}</label>
 				<p class="form-text mb-0">{{tx("usercleaner:action.dry-run-help")}}</p>
 			</div>
 		</div>
@@ -175,6 +181,7 @@
 						<thead>
 							<tr>
 								<th>{{tx("usercleaner:sample.user")}}</th>
+								<th>{{tx("usercleaner:sample.email")}}</th>
 								<th class="text-end">{{tx("usercleaner:sample.posts")}}</th>
 								<th class="text-end">{{tx("usercleaner:sample.rep")}}</th>
 								<th class="text-end">{{tx("usercleaner:sample.last-online")}}</th>

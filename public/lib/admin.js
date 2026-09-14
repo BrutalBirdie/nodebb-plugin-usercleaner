@@ -60,6 +60,7 @@ function collect() {
 		emailUnconfirmedOnly: $('#emailUnconfirmedOnly').is(':checked'),
 		neverLoggedInOnly: $('#neverLoggedInOnly').is(':checked'),
 		profileSpamOnly: $('#profileSpamOnly').is(':checked'),
+		emailPattern: $('#emailPattern').val(),
 		bannedMode: $('#bannedMode').val(),
 		minFlags: $('#minFlags').val(),
 		includeGroups: $('#includeGroups').val() || [],

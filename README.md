@@ -22,7 +22,8 @@ Deleting users is irreversible, so the plugin is deliberately hard to fire by ac
   category moderators and the admin running the job.
 - **Overly broad filter sets are rejected.** Post count and reputation ceilings alone are
   not enough — at least one narrowing condition (last online, account age, unconfirmed
-  email, never logged in, profile signals, flags, banned state or a group) is required.
+  email, never logged in, profile signals, an email pattern, flags, banned state or a
+  group) is required.
 - **Per-run deletion cap** (default 1000) as a final valve.
 - Every deletion is written to the ACP event log, as is the run itself.
 
@@ -37,11 +38,21 @@ Deleting users is irreversible, so the plugin is deliberately hard to fire by ac
 | Account older than | Protects recent registrations from a broad rule. |
 | Email never confirmed | The strongest single spam signal on a public forum. |
 | Registered and never came back | `lastonline` never advanced past `joindate`. |
+| Email address matches | Case-insensitive regular expression, e.g. `gsavps|pattaya-mega|verifiedlinklist`. See the note below. |
 | Profile filled in | Full name, signature, about-me or an uploaded avatar — a profile-spammer with zero posts. |
 | Banned accounts | Include / only / exclude. |
 | Minimum flag count | Accounts that have been reported. |
 | Group allowlist | Only consider members of these groups. |
 | Group denylist | Never delete members of these groups (donators, verified members, …). |
+
+### Matching unconfirmed email addresses
+
+With NodeBB's default `emailVerification: 'send'`, a registration's address is **not**
+written to `user:<uid>.email` — it only lives on `confirm:byUid:<uid>` → `confirm:<code>`
+until the link is clicked, which is why the ACP user profile shows no address for these
+accounts. The email pattern filter reads both sources, so it matches the spam-domain
+registrations that never validated. The preview table and the CSV export show the address
+it matched; `emailPending` in the CSV marks the ones taken from the confirm object.
 
 ## Content handling
 
