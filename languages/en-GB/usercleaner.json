@@ -110,5 +110,6 @@
 	"error.confirm-phrase": "Confirmation text did not match.",
 	"error.confirm-count": "Confirmation count did not match the previewed number of accounts.",
 	"error.invalid-email-pattern": "The email pattern is not a valid regular expression.",
+	"error.job-lost": "The job stopped reporting progress - the NodeBB worker running it was probably restarted. Any accounts already deleted stay deleted; preview again before starting a new run.",
 	"error.count-drifted": "The number of matching accounts changed between the preview and the run, so nothing was deleted. Preview again and re-confirm."
 }

@@ -56,7 +56,7 @@ plugin.addRoutes = async ({ router, middleware, helpers }) => {
 
 	// Static path first so it is not shadowed by /usercleaner/job.
 	routeHelpers.setupApiRoute(router, 'get', '/usercleaner/job/export', guard, async (req, res) => {
-		const rows = job.exportRows();
+		const rows = await job.exportRows();
 		const header = 'uid,username,email,emailConfirmed,emailPending,joindate,lastonline,postcount,topiccount,reputation,banned,flags\n';
 		const body = rows.map(row => [
 			row.uid,
@@ -79,11 +79,11 @@ plugin.addRoutes = async ({ router, middleware, helpers }) => {
 	});
 
 	routeHelpers.setupApiRoute(router, 'get', '/usercleaner/job', guard, async (req, res) => {
-		helpers.formatApiResponse(200, res, { job: job.status() });
+		helpers.formatApiResponse(200, res, { job: await job.status() });
 	});
 
 	routeHelpers.setupApiRoute(router, 'post', '/usercleaner/job', guard, async (req, res) => {
-		if (job.isRunning()) {
+		if (await job.isRunning()) {
 			return helpers.formatApiResponse(409, res, new Error('[[usercleaner:error.job-running]]'));
 		}
 
@@ -105,18 +105,19 @@ plugin.addRoutes = async ({ router, middleware, helpers }) => {
 			}
 		}
 
-		const id = job.start(filters, {
+		const id = await job.start(filters, {
 			callerUid: req.uid,
 			callerIp: req.ip,
 			dryRun,
 			confirmCount,
 		});
 
-		helpers.formatApiResponse(200, res, { id, job: job.status() });
+		helpers.formatApiResponse(200, res, { id, job: await job.status() });
 	});
 
 	routeHelpers.setupApiRoute(router, 'delete', '/usercleaner/job', guard, async (req, res) => {
-		helpers.formatApiResponse(200, res, { cancelled: job.cancel(), job: job.status() });
+		const cancelled = await job.cancel();
+		helpers.formatApiResponse(200, res, { cancelled, job: await job.status() });
 	});
 };
 

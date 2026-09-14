@@ -80,10 +80,14 @@ NodeBB has no bulk-delete endpoint, its user list simply fires one `DELETE /user
 per selected account in parallel. Raise the value for faster runs; lower it if the forum
 feels sluggish while a run is going.
 
-The progress bar sits at the top of the page and is rebuilt from the server on every page
-load, so reloading or navigating away and back keeps showing a running job. The job lives
-in the NodeBB process, so a restart of NodeBB does lose it — a deletion already carried out
-stays carried out.
+Job state lives in the database, not in the Node process, so it survives page reloads and
+is the same on every worker of a **clustered** NodeBB — the ACP poll can land on any
+worker and still sees the running job, and Cancel works from any of them. The progress bar
+sits at the top of the page and is rebuilt from that state on every load.
+
+If the worker running a job dies (a restart or a crash mid-run), the record stops being
+updated; after a minute the page reports the job as lost and a new run can be started.
+Accounts already deleted stay deleted.
 
 **Preview vs. dry run.** *Preview* is a synchronous scan that answers "how many match?"
 and fills the sample table; it is what arms the Run button. *Dry run* is the same scan
