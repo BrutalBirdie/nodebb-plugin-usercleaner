@@ -82,10 +82,26 @@ Access requires the `admin:users` admin privilege.
 
 ## Compatibility
 
-NodeBB **v4.x** only. v3 and earlier are not supported: the plugin uses the v4 ACP module
-loading pattern (`plugin.json` `modules` with ES-module syntax).
+NodeBB **v4.14.0 or newer**. The ACP template uses the `{{tx(...)}}` translation helper,
+which landed in v4.14.0; v3 and earlier are not supported at all, as the plugin uses the v4
+ACP module loading pattern (`plugin.json` `modules` with ES-module syntax).
 
 No theme dependency — the plugin only adds an ACP page.
+
+## Localisation
+
+Strings live in `languages/en-GB/usercleaner.json` under the `usercleaner` namespace.
+
+Note the two different call sites, which use different syntax:
+
+- **Templates** must use the benchpress helper: `{{tx("usercleaner:filters.heading")}}`,
+  or `{{tx(./label)}}` for a token supplied as template data. NodeBB v4.15.0 removed
+  whole-page translation ([`248257914e`][tx-commit]), so a bare `[[usercleaner:key]]` left
+  in a `.tpl` now renders literally.
+- **Client JS** still takes `[[usercleaner:key]]` directly — `alerts.*`, `modals.dialog`
+  and `$.fn.translateText` all run the string through the translator themselves.
+
+[tx-commit]: https://github.com/NodeBB/NodeBB/commit/248257914e2c6177a270529bc70017916989cd5c
 
 ## Development
 

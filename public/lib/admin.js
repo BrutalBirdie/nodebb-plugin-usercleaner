@@ -7,6 +7,15 @@ import { dialog } from 'modals';
 
 const POLL_INTERVAL = 1000;
 
+const STATUS_LABELS = {
+	scanning: '[[usercleaner:status.scanning]]',
+	deleting: '[[usercleaner:status.deleting]]',
+	completed: '[[usercleaner:status.completed]]',
+	cancelled: '[[usercleaner:status.cancelled]]',
+	aborted: '[[usercleaner:status.aborted]]',
+	error: '[[usercleaner:status.error]]',
+};
+
 let pollTimer = null;
 let lastPreview = null;
 
@@ -115,7 +124,7 @@ function confirmAndRun() {
 			</div>`,
 		buttons: {
 			cancel: {
-				label: '[[global:buttons.cancel]]',
+				label: '[[global:cancel]]',
 				className: 'btn-link',
 			},
 			confirm: {
@@ -232,14 +241,17 @@ function renderJob(job) {
 		.toggleClass('bg-danger', job.status === 'error' || job.status === 'aborted')
 		.toggleClass('bg-success', job.status === 'completed');
 
-	$('#progress-title').translateText(`[[usercleaner:status.${job.status}]]${job.dryRun ? ' [[usercleaner:status.dry-run-suffix]]' : ''}`);
+	const suffix = job.dryRun ? ' [[usercleaner:status.dry-run-suffix]]' : '';
+	$('#progress-title').translateText(`${STATUS_LABELS[job.status] || job.status}${suffix}`);
 	$('#progress-text').translateText(
 		`[[usercleaner:progress.text, ${job.scanned}, ${job.total}, ${job.matched}, ${job.deleted}, ${job.failed}]]`
 	);
 
-	const errorText = job.message ? [job.message] : [];
-	job.errors.slice(0, 10).forEach(e => errorText.push(`uid ${e.uid}: ${e.message}`));
-	$('#progress-errors').translateHtml(errorText.join('<br />'));
+	const errors = $('#progress-errors').empty();
+	if (job.message) {
+		errors.append($('<div>').translateText(job.message));
+	}
+	job.errors.slice(0, 10).forEach(e => errors.append($('<div>').text(`uid ${e.uid}: ${e.message}`)));
 
 	if (!running) {
 		renderStats(job);
