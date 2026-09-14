@@ -9,3 +9,4 @@ Thumbs.db
 *.log
 .env
 .env.*
+eslint.config.mjs
