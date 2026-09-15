@@ -6,6 +6,11 @@ page built around a dry-run-first workflow.
 Written for forums that have accumulated tens of thousands of registrations, most of
 which never posted and never came back.
 
+> [!CAUTION]
+> This plugin is 100% vibe coded. It deletes user accounts, and deletions cannot be
+> undone — handle it with care and make sure you have a current, tested database backup
+> before running it against a real forum.
+
 ## Safety model
 
 Deleting users is irreversible, so the plugin is deliberately hard to fire by accident:
